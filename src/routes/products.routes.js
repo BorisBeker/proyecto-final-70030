@@ -1,11 +1,13 @@
 import { Router } from "express"
 import fs from "fs"
+import { io } from "../server.js"
 
 const router = Router();
 
 const productos = JSON.parse(fs.readFileSync("./datos/productos.json", "utf-8"));
 
 router.get("/", (req, res) => {
+    io.emit("getProducts", productos)
     res.json(productos);
 })
 
@@ -38,11 +40,10 @@ router.post("/", (req, res) => {
             stock,
             category
         }
-
         productos.push(newProduct);
-
-        fs.appendFileSync("./data/productos.json", JSON.stringify(newProduct, null, "\t"));
+        fs.writeFileSync("./datos/productos.json", JSON.stringify(productos, null, "\t"));
         }
+    io.emit("getProducts", productos);
     res.json(productos);
 })
 
@@ -65,6 +66,7 @@ router.put("/:pid", (req, res) => {
             product.stock = stock;
             product.category = category;
             fs.writeFileSync("./datos/productos.json", JSON.stringify(productos, null, "\t"));
+            io.emit("getProducts", productos)
             res.json(product);
         }
     }
@@ -79,8 +81,9 @@ router.delete("/:pid", async (req, res) => {
     } else {
         try{
             const product = await productos.splice(productIndex, 1)
+            io.emit("getProducts", productos)
             res.json(product);
-            fs.writeFileSync("./datos/productos.json", JSON.stringify("[]", null, "\t"));
+            fs.writeFileSync("./datos/productos.json", JSON.stringify(productos, null, "\t"));
         } catch(err) {
             res.status(400).json(`Hubo un error al realizar la petición: ${err}`);
         };

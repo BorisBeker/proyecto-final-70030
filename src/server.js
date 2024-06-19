@@ -47,3 +47,5 @@ io.on("connection", (socket) => {
 
 app.use("/api/products", productsRoutes);
 app.use("/api/carts", cartRoutes);
+
+export {io};

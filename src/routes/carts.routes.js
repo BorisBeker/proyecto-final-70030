@@ -14,7 +14,7 @@ router.post("/", (req, res) => {
     };
 
     carts.push(newCart);
-    fs.appendFileSync("./data/carritos.json", JSON.stringify(carts, null, "\t"));
+    fs.writeFileSync("./datos/carritos.json", JSON.stringify(carts, null, "\t"));
     res.json(carts);
 })
 
