@@ -1,4 +1,4 @@
-import productoModel from "./models/producto.model.js";
+import productoModel from "../models/producto.model.js";
 
 class productDBManager {
 

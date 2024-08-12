@@ -1,4 +1,4 @@
-import { carritoModel } from "./models/carrito.model.js";
+import { carritoModel } from "../models/carrito.model.js";
 
 class cartDBManager {
 

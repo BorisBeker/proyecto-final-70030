@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { productDBManager } from '../productDBManager.js';
-import { cartDBManager } from '../cartDBManager.js';
+import { productDBManager } from '../managers/productDBManager.js';
+import { cartDBManager } from '../managers/cartDBManager.js';
 
 const router = Router();
 const ProductService = new productDBManager();
