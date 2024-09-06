@@ -3,8 +3,6 @@ import passport from "passport";
 
 class AuthController {
     async login(req, res) {
-        console.log(req.user); // Recibimos el usuario desde el middleware de passport
-
         const payload = {
             email: req.user.email,
             role: req.user.role,
@@ -34,7 +32,7 @@ class AuthController {
                 return res.status(400).json({ message: info.message || "No se pudo registrar el usuario" });
             }
 
-            res.status(201).json({ message: "Registro exitoso", user: { email: user.email, name: `${user.first_name} ${user.last_name}` } });
+            res.status(201).json({ message: "Registro exitoso", user: { email: user.email, name: `${user.first_name} ${user.last_name}`, role: user.role } });
         })(req, res);
     }
 

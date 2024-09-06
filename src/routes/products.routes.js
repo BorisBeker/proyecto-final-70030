@@ -1,76 +1,19 @@
 import { Router } from 'express';
-import { productDBManager } from '../managers/productDBManager.js';
+import { ProductController } from '../controller/product.controller.js';
+import { validate } from '../middlewares/validate.middleware.js';
+import { productDto } from '../dto/product.dto.js';
+import { authenticate, authorizations } from '../middlewares/authorization.middleware.js';
 
 const router = Router();
-const ProductService = new productDBManager();
 
-router.get('/', async (req, res) => {
-    const result = await ProductService.getAllProducts(req.query);
+router.get('/', ProductController.getAllProducts);
 
-    res.send({
-        status: 'success',
-        payload: result
-    });
-});
+router.get('/:pid', ProductController.getProductByID);
 
-router.get('/:pid', async (req, res) => {
-    try {
-        const result = await ProductService.getProductByID(req.params.pid);
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
+router.post('/', validate(productDto), authenticate("jwt"), authorizations(["admin"]), ProductController.createProduct);
 
-router.post('/', async (req, res) => {
-    try {
-        const result = await ProductService.createProduct(req.body);
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
+router.put('/:pid', validate(productDto), ProductController.updateProduct);
 
-router.put('/:pid', async (req, res) => {
-    try {
-        const result = await ProductService.updateProduct(req.params.pid, req.body);
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
-
-router.delete('/:pid', async (req, res) => {
-    try {
-        const result = await ProductService.deleteProduct(req.params.pid);
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
+router.delete('/:pid', ProductController.deleteProduct);
 
 export default router;

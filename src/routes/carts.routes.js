@@ -1,121 +1,24 @@
 import { Router } from 'express';
-import { productDBManager } from '../managers/productDBManager.js';
-import { cartDBManager } from '../managers/cartDBManager.js';
+import { CartController } from '../controller/cart.controller.js';
+import { cartDto } from '../dto/cart.dto.js';
+import { validate } from '../middlewares/validate.middleware.js';
 
 const router = Router();
-const ProductService = new productDBManager();
-const CartService = new cartDBManager(ProductService);
 
-router.get('/:cid', async (req, res) => {
+router.get('/:cid', CartController.getCartByID);
 
-    try {
-        const result = await CartService.getProductsFromCartByID(req.params.cid);
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
+router.post('/', validate(cartDto), CartController.createCart);
 
-router.post('/', async (req, res) => {
+router.post('/:cid/product/:pid', CartController.addProductToCart);
 
-    try {
-        const result = await CartService.createCart();
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
+router.post('/:cid/purchase', CartController.purchaseCart);
 
-router.post('/:cid/product/:pid', async (req, res) => {
+router.delete('/:cid/product/:pid', CartController.deleteProductFromCart);
 
-    try {
-        const result = await CartService.addProductByID(req.params.cid, req.params.pid)
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
+router.put('/:cid', CartController.updateAllProducts);
 
-router.delete('/:cid/product/:pid', async (req, res) => {
+router.put('/:cid/product/:pid', CartController.updateProductInCart);
 
-    try {
-        const result = await CartService.deleteProductByID(req.params.cid, req.params.pid)
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
-
-router.put('/:cid', async (req, res) => {
-
-    try {
-        const result = await CartService.updateAllProducts(req.params.cid, req.body.products)
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
-
-router.put('/:cid/product/:pid', async (req, res) => {
-
-    try {
-        const result = await CartService.updateProductByID(req.params.cid, req.params.pid, req.body.quantity)
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
-
-router.delete('/:cid', async (req, res) => {
-
-    try {
-        const result = await CartService.deleteAllProducts(req.params.cid)
-        res.send({
-            status: 'success',
-            payload: result
-        });
-    } catch (error) {
-        res.status(400).send({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
+router.delete('/:cid', CartController.deleteAllProducts);
 
 export default router;

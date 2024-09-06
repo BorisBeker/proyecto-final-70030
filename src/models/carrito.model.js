@@ -1,23 +1,22 @@
-import mongoose from 'mongoose';
+import { Schema, model } from "mongoose";
 
-const carritosCollection = 'carritos';
-
-const carritoSchema = new mongoose.Schema({
-    products: {
-        type: [
+const carritoSchema = new Schema(
+    {
+        products: [
             {
-                product: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref: "productos"
-                },
-                quantity: {
-                    type: Number,
-                    default: 1
-                }
-            }
+                product: { type: Schema.Types.ObjectId, ref: "productos" },
+                quantity: { type: Number, required: true },
+            },
         ],
-        default: []
+    },
+    {
+        timestamps: true,
     }
+);
+
+carritoSchema.pre("findOne", async function (next) {
+    this.populate("products.product");
+    next();
 });
 
-export const carritoModel = mongoose.model(carritosCollection, carritoSchema);
+export const carritoModel = model("cart", carritoSchema);

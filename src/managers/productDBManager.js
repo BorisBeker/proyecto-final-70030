@@ -28,6 +28,7 @@ class productDBManager {
 
     async getProductByID(pid) {
         const product = await productoModel.findOne({_id: pid});
+        console.log(product)
 
         if (!product) throw new Error(`el producto ${pid} no existe`);
 
