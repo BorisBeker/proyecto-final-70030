@@ -1,9 +1,10 @@
 import Joi from "joi";
 
 export const productDto = Joi.object({
-    name: Joi.string().required(),
+    title: Joi.string().required(),
     description: Joi.string().required(),
+    code: Joi.string().required(),
     price: Joi.number().required(),
-    image: Joi.string().uri().required(),
     stock: Joi.number().required(),
+    category: Joi.string().required()
 });

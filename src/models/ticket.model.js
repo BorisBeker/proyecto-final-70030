@@ -22,7 +22,10 @@ const ticketSchema = new mongoose.Schema({
 });
 
 ticketSchema.pre('save', function (next) {
-    this.code = uuidv4(); // Autogenerar un código único
+    console.log("hola")
+    if (!this.code) {
+        this.code = uuidv4();
+    }
     next();
 });
 

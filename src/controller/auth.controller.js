@@ -11,8 +11,8 @@ class AuthController {
         const token = generateToken(payload);
 
         res.cookie("token", token, {
-            maxAge: 1000 * 60 * 60 * 2, // 2 horas
-            httpOnly: true, // Solo se puede acceder a través de peticiones http
+            maxAge: 1000 * 60 * 60 * 2,
+            httpOnly: true,
         });
 
         res.status(200).json({ message: "Login exitoso" });
@@ -53,7 +53,7 @@ class AuthController {
     }
 
     async logout(req, res) {
-        res.clearCookie("token"); // Elimina la cookie del token JWT
+        res.clearCookie("token");
         res.status(200).json({ message: "Logout exitoso" });
     }
 }

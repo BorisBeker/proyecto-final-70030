@@ -22,14 +22,12 @@ function initializePassport() {
             }
 
             const isPassordCorrect = await verifyPassword(password, user.password);
-            console.log(password, user.password)
 
             if (!isPassordCorrect) {
                 return done(null, false, { message: "la contraseña es incorrecta" })
             }
             return done(null, user)
         } catch (error) {
-            console.log(error)
             return done("hubo un error " + error.message)
         }
     }))
@@ -42,9 +40,8 @@ function initializePassport() {
                 passReqToCallback: true,
             }, async (req, email, password, done) => {
                 try {
-                    const { first_name, last_name, age } = req.body;
-                    console.log( first_name, last_name, age)
-                    if (!first_name || !last_name || !age) {
+                    const { first_name, last_name, age, role } = req.body;
+                    if (!first_name || !last_name || !age || !role) {
                         return done(null, false, {
                             message: "todos los campos son requeridos",
                         });
@@ -56,14 +53,13 @@ function initializePassport() {
                         return done(null, false, { message: "el usuario ya existe" });
                     }
 
-                    const hashPassword = await createHash(password);
-
                     const user = await userModel.create({
                         first_name,
                         last_name,
                         email,
                         age,
-                        password: hashPassword,
+                        role,
+                        password
                     });
 
                     return done(null, user);
@@ -86,9 +82,6 @@ function initializePassport() {
             }
         })
 }
-
-// jwt
-
 passport.use(
     "jwt",
     new JWTStrategy({
@@ -109,7 +102,6 @@ function cookieExtractor(req) {
     if (req && req.cookies) {
         token = req.cookies.token;
     }
-    console.log("cookieExtractor", token);
 
     return token;
 }

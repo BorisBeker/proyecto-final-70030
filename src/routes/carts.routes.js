@@ -7,9 +7,9 @@ const router = Router();
 
 router.get('/:cid', CartController.getCartByID);
 
-router.post('/', validate(cartDto), CartController.createCart);
+router.post('/', CartController.createCart);
 
-router.post('/:cid/product/:pid', CartController.addProductToCart);
+router.post('/:cid/product/:pid', validate(cartDto), CartController.addProductToCart);
 
 router.post('/:cid/purchase', CartController.purchaseCart);
 

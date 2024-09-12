@@ -2,6 +2,7 @@ import { productDBManager } from '../managers/productDBManager.js';
 import { cartDBManager } from '../managers/cartDBManager.js';
 import { ticketModel } from '../models/ticket.model.js';
 import { userModel } from '../models/user.model.js';
+import { v4 as uuidv4 } from 'uuid';
 
 const ProductService = new productDBManager();
 const CartService = new cartDBManager(ProductService);
@@ -24,13 +25,18 @@ export class CartController {
 
     static async createCart(req, res) {
         try {
-            const { products } = req.body;
+            const { products, email } = req.body;
             const cart = await CartService.createCart({ products });
+            const user = await userModel.findOne({ email });
+            if (!user) {
+                return res.status(404).json({ error: "Usuario no encontrado" });
+            }
+            user.carts.push({ cart: cart._id });
+            await user.save();
+    
             res.status(201).json(cart);
         } catch (error) {
-            res
-                .status(500)
-                .json({ error: "Error al crear el carrito", details: error.message });
+            res.status(500).json({ error: "Error al crear el carrito", details: error.message });
         }
     }
 
@@ -114,6 +120,8 @@ export class CartController {
             const cartId = req.params.cid;
             const cart = await CartService.getProductsFromCartByID(cartId);
 
+            let ticket = null;
+
             if (!cart) {
                 return res.status(404).send({ status: 'error', message: 'Carrito no encontrado.' });
             }
@@ -125,7 +133,6 @@ export class CartController {
                 const product = await ProductService.getProductByID(item.product);
 
                 if (product.stock >= item.quantity) {
-                    // Restar el stock del producto
                     product.stock -= item.quantity;
                     totalAmount += product.price * item.quantity;
                     await product.save();
@@ -134,32 +141,28 @@ export class CartController {
                 }
             }
 
-            // Crear el ticket si hubo productos disponibles
             if (totalAmount > 0) {
                 
                 const user = await userModel.findOne({ carts: { $elemMatch: { cart: cartId } } });
-                if (!user) {
-                    return res.status(404).send({ status: 'error', message: 'Usuario no encontrado.' });
-                }
-                console.log(user);
-                const ticket = new ticketModel({
+                ticket = new ticketModel({
+                    code: uuidv4(),
                     amount: totalAmount,
                     purchaser: user.email
                 });
+
+                console.log(ticket)
                 await ticket.save();
             }
 
-            // Filtrar los productos no comprados
             const remainingProducts = cart.products.filter(item => unavailableProducts.includes(item.product));
 
-            // Actualizar el carrito con los productos restantes
             cart.products = remainingProducts;
             await cart.save();
 
             res.send({
                 status: 'success',
                 message: 'Compra finalizada.',
-                ticket: totalAmount > 0 ? ticket : null,
+                ticket: ticket,
                 unavailableProducts
             });
 

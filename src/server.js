@@ -10,13 +10,13 @@ import { initializePassport } from "./config/passport.config.js";
 import passport from "passport";
 import morgan from "morgan";
 import { errorHandler } from "./middlewares/error.middleware.js";
+import { config } from "./config/config.js"
 
 const app = Express();
+const {MONGO_URI} = config;
+mongoose.connect(MONGO_URI).then(() => { console.log("MongoDB Conected") }).catch((error) => { console.log(error) });
 
-const url = "mongodb://localhost:27017/proyectofinal";
-mongoose.connect(url).then(() => { console.log("MongoDB Conected") }).catch((error) => { console.log(error) });
-
-const PORT = 5000;
+const {PORT} = config;
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
