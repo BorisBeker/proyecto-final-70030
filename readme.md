@@ -139,8 +139,12 @@ Ejemplo de como debe estar estructurado el body:
 
 Creación de multiples usuarios de prueba con parametros aleatorios.
 
-GET /api/mocks/users/:n  ACLARACIÓN: en vez de ":n" se debe colocar un número a elección.
+GET /api/mocks/users/:n  
+
+ACLARACIÓN: en vez de ":n" se debe colocar un número a elección.
 
 Creación de multiples productos de prueba con parametros aleatorios.
 
-GET /api/mocks/products/:n  ACLARACIÓN: en vez de ":n" se debe colocar un número a elección.
+GET /api/mocks/products/:n  
+
+ACLARACIÓN: en vez de ":n" se debe colocar un número a elección.
