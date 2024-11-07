@@ -10,13 +10,14 @@ import { initializePassport } from "./config/passport.config.js";
 import passport from "passport";
 import morgan from "morgan";
 import { errorHandler } from "./middlewares/error.middleware.js";
-import { config } from "./config/config.js"
+import mocksRouter from './routes/mocks.routes.js';
+import env from "./utils/env.util.js"
 
 const app = Express();
-const {MONGO_URI} = config;
+const MONGO_URI = env.MONGO_URI;
 mongoose.connect(MONGO_URI).then(() => { console.log("MongoDB Conected") }).catch((error) => { console.log(error) });
 
-const {PORT} = config;
+const PORT = env.PORT;
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
@@ -32,6 +33,7 @@ app.listen(PORT, () => {
 app.use(errorHandler);
 
 app.use("/api/products", productsRoutes);
+app.use('/api/mocks', mocksRouter);
 app.use("/api/cart", authenticate("jwt"), authorizations(["user"]), cartRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", authenticate("jwt"), authorizations(["admin"]), userRoutes)

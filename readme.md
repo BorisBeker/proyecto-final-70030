@@ -134,3 +134,13 @@ Ejemplo de como debe estar estructurado el body:
     "first_name": "nombre2"
 }
 ~~~
+
+# ACTUALIZACIÓN DE MOCKS
+
+Creación de multiples usuarios de prueba con parametros aleatorios.
+
+GET /api/mocks/users/:n  ACLARACIÓN: en vez de ":n" se debe colocar un número a elección.
+
+Creación de multiples productos de prueba con parametros aleatorios.
+
+GET /api/mocks/products/:n  ACLARACIÓN: en vez de ":n" se debe colocar un número a elección.
