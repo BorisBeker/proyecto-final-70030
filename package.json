@@ -9,7 +9,10 @@
     "dev": "nodemon src/server.js --port=5000 --mode=prod",
     "start": "node src/server.js",
     "mocha": "mocha ./test/mocha",
-    "supertest": "mocha ./test/supertest"
+    "supertest": "mocha ./test/supertest",
+    "image": "docker build -t coder70030 .",
+    "rename": "docker tag coder70030 borisrafael/coder70030:1.0.0",
+    "push": "docker push borisrafael/coder70030:1.0.0"
   },
   "keywords": [],
   "author": "",
