@@ -36,6 +36,7 @@ export class CartController {
     
             res.status(201).json(cart);
         } catch (error) {
+            console.log(error)
             res.status(500).json({ error: "Error al crear el carrito", details: error.message });
         }
     }

@@ -7,7 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/server.js --port=5000 --mode=prod",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "mocha": "mocha ./test/mocha",
+    "supertest": "mocha ./test/supertest"
   },
   "keywords": [],
   "author": "",
@@ -30,7 +32,15 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "socket.io": "^4.7.5",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^10.0.0",
     "winston": "^3.16.0"
+  },
+  "devDependencies": {
+    "chai": "^5.1.2",
+    "mocha": "^11.0.1",
+    "sinon": "^19.0.2",
+    "supertest": "^7.0.0"
   }
 }

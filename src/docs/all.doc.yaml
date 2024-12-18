@@ -1,0 +1,432 @@
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [user, admin]
+        age:
+          type: integer
+        password:
+          type: string
+    Product:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        code:
+          type: string
+        price:
+          type: number
+        stock:
+          type: integer
+        category:
+          type: string
+    Cart:
+      type: object
+      properties:
+        email:
+          type: string
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              product:
+                type: string
+              quantity:
+                type: integer
+    Ticket:
+      type: object
+      properties:
+        code:
+          type: string
+        purchase_datetime:
+          type: string
+          format: date-time
+        amount:
+          type: number
+        purchaser:
+          type: string
+paths:
+  /api/auth/register:
+    post:
+      summary: Registrar nuevo usuario
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        201:
+          description: Registro exitoso
+  /api/auth/login:
+    post:
+      summary: Login
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Login exitoso
+        401:
+          description: Usuario o contraseña incorrecto
+  /api/products:
+    get:
+      summary: Listar todos los productos
+      tags:
+        - Products
+      responses:
+        200:
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    post:
+      summary: Agregar nuevo producto(solo admin)
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        201:
+          description: Producto añadido correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  product:
+                    $ref: '#/components/schemas/Product'
+  /api/products/{pid}:
+    get:
+      summary: Mostrar producto por ID
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Product ID
+      responses:
+        200:
+          description: Detalle del producto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    put:
+      summary: Actualizar producto por ID(solo admin)
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Product ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+    delete:
+      summary: Eliminar producto por ID(solo admin)
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Product ID
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/cart:
+    post:
+      summary: Crear carrito
+      tags:
+        - Cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cart'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+  /api/cart/{cid}:
+    get:
+      summary: Obtener carrito por ID
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Cart ID
+      responses:
+        200:
+          description: Cart details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+    delete:
+      summary: Eliminar carrito por ID
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Cart ID
+      responses:
+        200:
+          description: Carrito eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/cart/{cid}/product/{pid}:
+    post:
+      summary: Agregar producto al carrito
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Cart ID
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Product ID
+      responses:
+        200:
+          description: El producto es añadido al carrito correctamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /api/cart/{cid}/purchase:
+    post:
+      summary: Finalizar la compra
+      tags:
+        - Cart
+      parameters:
+        - name: cid
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Cart ID
+      responses:
+        200:
+          description: Compra realizada, ticket generado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+  /api/users:
+    get:
+      summary: Obtener todos los usuarios
+      tags:
+        - Users
+      responses:
+        200:
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: string
+  /api/users/{id}:
+    get:
+      summary: Obtener usuario por ID
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: User ID
+      responses:
+        200:
+          description: Detalles de usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: string
+    put:
+      summary: Actualizar usuario por ID
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: User ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: Usuario actualizado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: string
+    delete:
+      summary: Eliminar usuario por ID
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: User ID
+      responses:
+        200:
+          description: Usuario eliminado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: string

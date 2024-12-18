@@ -19,7 +19,6 @@ export function authenticate(strategy) {
             { session: false },
             async (error, user, info) => {
                 if (error) return next(error);
-
                 if (!user)
                     return res.status(401).json({
                         message: info.messages
